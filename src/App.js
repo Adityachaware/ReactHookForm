@@ -1,171 +1,148 @@
 import React from "react";
 import "./styles/App.scss";
+import classNames from "classnames";
 import { useForm, useFieldArray } from "react-hook-form";
 
 function App() {
-  const { register, handleSubmit, control } = useForm();
-
-  const UserInformation = (props) => {
-    const { register, control } = props;
-    const { append, fields, remove } = useFieldArray({
-      control,
-      name: "users",
-    });
-
-    return (
-      <>
-        <form>
-          {fields.map((item, index) => (
-            <div className="form-row form-group">
-              <div className="col">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Your First name"
-                  name={`users[${index}].firstName`}
-                  ref={register()}
-                  defaultValue={item.firstName}
-                />
-              </div>
-              <div className="col">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Your Last name"
-                  name={`users[${index}].lastName`}
-                  ref={register()}
-                  defaultValue={item.lastName}
-                />
-              </div>
-              <div className="col">
-                <input
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter Your E-mail Address"
-                  name={`users[${index}].email`}
-                  ref={register()}
-                  defaultValue={item.email}
-                />
-              </div>
-              <div className="col">
-                <select
-                  className="form-control"
-                  id="state"
-                  ref={register()}
-                  name={`users[${index}].state`}
-                  defaultValue={item.state}
-                >
-                  <option value="">Select Your State</option>
-                  <option value="Jharkhand">Jharkhand</option>
-                  <option value="Bihar">Bihar</option>
-                  <option value="Assam">Assam</option>
-                  <option value="Goa">Goa</option>
-                  <option value="Manipur">Manipur</option>
-                </select>
-              </div>
-              <div className="col">
-                <button type="button" onClick={() => remove(index)}>
-                  delete
-                </button>
-              </div>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={() =>
-              append({
-                firstName: " ",
-                lastName: " ",
-                email: " ",
-                state: " ",
-              })
-            }
-          >
-            Add User
-          </button>
-        </form>
-      </>
-    );
-  };
-
-  const onSubmit = (data) => {
-    console.log(data);
-  };
-
+  const { register, handleSubmit, errors } = useForm({
+    mode: "onChange",
+  });
+  console.log(errors, "errors");
+  const onSubmit = (data) => console.log(data);
   return (
     <div className="App">
       <div className="container py-5">
-        <div className="card border-0 shadow p-4 w-50 mx-auto">
+        <div className="card border-0 shadow text-white text-center p-4 w-100 mx-auto">
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="form-group">
               <label htmlFor="fullname">Full Name</label>
               <input
                 type="text"
-                className="form-control"
+                className={classNames("form-control", {
+                  "is-invalid": errors.fullname,
+                })}
                 id="fullname"
-                ref={register}
-                name="address.fullname"
+                placeholder="Enter Your Full Name"
+                name="fullname"
+                ref={register({
+                  required: "This field is required",
+                  minLength: {
+                    value: 4,
+                    message: "full name should be more than 4 char",
+                  },
+                })}
               />
+
+              {errors.fullname && (
+                <div className="invalid-feedback">
+                  {errors.fullname.message}
+                </div>
+              )}
             </div>
             <div className="form-group">
-              <label htmlFor="email">Email address</label>
+              <label htmlFor="email">E-mail Address</label>
               <input
                 type="email"
-                className="form-control"
+                className={classNames("form-control", {
+                  "is-invalid": errors.email,
+                })}
                 id="email"
-                ref={register}
-                name="address.email"
+                placeholder="Enter Your E-mail Address"
+                name="email"
+                ref={register({
+                  required: "requiredfield",
+                  pattern: {
+                    value: /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+                    message: "inavlid email Id",
+                  },
+                })}
               />
+              {errors.email && (
+                <div className="invalid-feedback">{errors.email.message}</div>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="phone">Phone Number</label>
               <input
                 type="text"
-                className="form-control"
+                className={classNames("form-control", {
+                  "is-invalid": errors.phone,
+                })}
                 id="phone"
-                ref={register}
-                name="address.phone"
+                placeholder="Enter Your Phone Number"
+                name="phone"
+                ref={register({
+                  required: "Required",
+                  pattern: {
+                    value: /^\d{10}$/,
+                    message: "Enter 10 digit mobile number",
+                  },
+                })}
               />
+              {errors.phone && (
+                <div className="invalid-feedback">{errors.phone.message}</div>
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
               <input
                 type="password"
-                className="form-control"
+                className={classNames("form-control", {
+                  "is-invalid": errors.password,
+                })}
                 id="password"
-                ref={register}
+                placeholder="Enter Your Password"
                 name="password"
+                ref={register({
+                  required: true,
+                  pattern: {
+                    value: /(?=^.{8,}$)((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/,
+                    message: "Enter proper password",
+                  },
+                })}
               />
+              {errors.password && (
+                <div className="invalid-feedback">
+                  {errors.password.message}
+                </div>
+              )}
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="text"
-                className="form-control"
-                id="password"
-                ref={register}
-                name="password[0]"
-              />
+              <label htmlFor="state">Choose Your State</label>
+              <select
+                className={classNames("form-control", {
+                  "is-invalid": errors.state,
+                })}
+                id="state"
+                name="state"
+                ref={register({
+                  required: "required",
+                })}
+              >
+                <option value="">--- Select Your State ---</option>
+                <option value="Jharkhand">Jharkhand</option>
+                <option value="Assam">Assam</option>
+                <option value="Meghalaya">Meghalaya</option>
+                <option value="Punjab">Punjab</option>
+              </select>
+              {errors.state && (
+                <div className="invalid-feedback">{errors.state.message}</div>
+              )}
             </div>
             <div className="form-group">
-              <label htmlFor="password">Password</label>
-              <input
-                type="text"
-                className="form-control"
-                id="password"
-                ref={register}
-                name="password[1]"
-              />
-            </div>
-            <div className="form-group">
+              <label htmlFor="gender" className="mr-4">
+                Choose Your Gender
+              </label>
               <div className="form-check form-check-inline">
                 <input
                   className="form-check-input"
                   type="radio"
                   id="male"
                   value="male"
-                  ref={register}
                   name="gender"
+                  ref={register({
+                    required: "required",
+                  })}
                 />
                 <label className="form-check-label" htmlFor="male">
                   male
@@ -177,10 +154,12 @@ function App() {
                   type="radio"
                   id="female"
                   value="female"
-                  ref={register}
                   name="gender"
+                  ref={register({
+                    required: "required",
+                  })}
                 />
-                <label className="form-check-label" htmlFor="female">
+                <label className="form-check-input" htmlFor="female">
                   female
                 </label>
               </div>
@@ -189,56 +168,37 @@ function App() {
                   className="form-check-input"
                   type="radio"
                   id="other"
-                  ref={register}
                   value="other"
                   name="gender"
+                  ref={register({
+                    required: "required",
+                  })}
                 />
                 <label className="form-check-label" htmlFor="other">
                   other
                 </label>
               </div>
-            </div>
-            <div className="form-group">
-              <select className="custom-select" ref={register} name="state">
-                <option value="">Select your state</option>
-                <option value="Delhi">Delhi</option>
-                <option value="Punjab">Punjab</option>
-                <option value="Jharkhand">Jharkhand</option>
-                <option value="Bihar">Bihar</option>
-              </select>
+              {errors.gender && <p>{errors.gender.message}</p>}
             </div>
             <div className="form-group">
               <div className="form-check form-check-inline">
                 <input
                   className="form-check-input"
                   type="checkbox"
-                  id="terms"
-                  value="agree"
-                  name="terms"
-                  ref={register}
+                  id="tnc"
+                  name="tnc"
+                  ref={register({
+                    required: true,
+                  })}
                 />
-                <label className="form-check-label" for="terms">
-                  I agree all terms and conditons
-                </label>
-              </div>
-              <div className="form-check form-check-inline">
-                <input
-                  className="form-check-input"
-                  type="checkbox"
-                  id="updates"
-                  name="updates"
-                  ref={register}
-                />
-                <label className="form-check-label" for="updates">
-                  send me latest Bootstrap updates
+                <label className="form-check-label" htmlFor="tnc">
+                  I agree all terms conditions
                 </label>
               </div>
             </div>
-
-            <button type="submit">Submit</button>
+            <button className="btn btn-primary">Create New Account</button>
           </form>
         </div>
-        <UserInformation register={register} control={control} />
       </div>
     </div>
   );
