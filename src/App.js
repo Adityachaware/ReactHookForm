@@ -194,6 +194,9 @@ function App() {
                 <label className="form-check-label" htmlFor="tnc">
                   I agree all terms conditions
                 </label>
+                <label className="form-check-label" htmlFor="tnc">
+                  practice
+                </label>
               </div>
             </div>
             <button className="btn btn-primary">Create New Account</button>
