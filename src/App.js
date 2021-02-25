@@ -197,9 +197,6 @@ function App() {
                 <label className="form-check-label" htmlFor="tnc">
                   practice
                 </label>
-                <label className="form-check-label" htmlFor="tnc">
-                  practice2
-                </label>
               </div>
             </div>
             <button className="btn btn-primary">Create New Account</button>
